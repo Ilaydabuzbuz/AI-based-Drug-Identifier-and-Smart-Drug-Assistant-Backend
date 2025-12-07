@@ -1,15 +1,32 @@
-import psycopg2
+import psycopg
 import pandas as pd
 
 # Connect to DB
-conn = psycopg2.connect(
-    dbname="pill_data",
+conn = psycopg.connect(
+    dbname="smart_drug_db",
+    user="drug_user",
+    password="drug_password",
     host="localhost",
     port="5432"
 ) 
 
+# Create table if not exists
+with conn.cursor() as cur:
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS pills (
+            id SERIAL PRIMARY KEY,
+            image_path TEXT,
+            image_filename TEXT,
+            pill_name TEXT,
+            shape TEXT,
+            color TEXT,
+            imprint TEXT
+        );
+    """)
+    conn.commit()
+
 # Load CSV
-df = pd.read_csv("db/pill_color_imprint_dataset.csv")
+df = pd.read_csv("smart_drug_assistant/db/pill_color_imprint_dataset.csv")
 
 # Insert data
 for _, row in df.iterrows():

@@ -1,8 +1,8 @@
 import os
 
 from dotenv import load_dotenv
-import psycopg2
-from psycopg2.extensions import connection as PGConnection
+import psycopg
+from psycopg import Connection as PGConnection
 from typing import Optional
 
 load_dotenv()
@@ -19,5 +19,5 @@ def get_db_connection(
     password = password or os.getenv("PG_PASSWORD")
     host = host or os.getenv("PG_HOST")
     port = port or os.getenv("PG_PORT")
-    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    conn = psycopg.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     return conn
