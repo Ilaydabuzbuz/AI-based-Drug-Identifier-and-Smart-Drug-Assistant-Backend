@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from smart_drug_assistant.db.connection import get_db_connection
+from smart_drug_assistant.routers import auth
 
 '''
 SELAM
@@ -9,6 +10,8 @@ terminalde : Run docker-compose up to start PostgreSQL
              to start the FastAPI server.
 '''
 app = FastAPI()
+
+app.include_router(auth.router)
 
 @app.get("/check-db")
 def check_db():

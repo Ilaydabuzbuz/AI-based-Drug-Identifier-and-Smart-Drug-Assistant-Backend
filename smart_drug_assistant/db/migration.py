@@ -22,6 +22,12 @@ with conn.cursor() as cur:
             color TEXT,
             imprint TEXT
         );
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE,
+            hashed_password TEXT NOT NULL
+        );
     """)
     conn.commit()
 
