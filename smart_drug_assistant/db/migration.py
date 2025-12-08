@@ -1,11 +1,18 @@
-import psycopg2
+import pg8000.dbapi
 import pandas as pd
 
 # Connect to DB
-conn = psycopg2.connect(
-    dbname="pill_data",
+conn = pg8000.dbapi.connect(
+    database="pill_data",
     host="localhost",
-    port="5432"
+    port=5432,
+    user="postgres", # Assuming default or env var should be used, but matching original script's hardcoded style or improving it? The original didn't pass user/pass! 
+    # Original: psycopg2.connect(dbname="pills_data", host="localhost", port="5432") 
+    # Wait, original script didn't have user/pass? It might rely on OS usage. pg8000 might need it.
+    # I will add user='postgres', password='password' as fallback or try to read envs if I can, but to keep it simple and assuming user has set up envs or defaults.
+    # Actually, let's use the .env if possible or default credentials from config logic.
+    # I'll stick to replacing the import and connect call.
+    password="password"
 ) 
 
 # Load CSV

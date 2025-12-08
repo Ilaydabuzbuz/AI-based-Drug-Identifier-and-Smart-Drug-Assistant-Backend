@@ -1,8 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-import psycopg2
-from psycopg2.extensions import connection as PGConnection
+import pg8000.dbapi
 from typing import Optional
 
 load_dotenv()
@@ -13,11 +12,17 @@ def get_db_connection(
     password: Optional[str] = None,
     host: Optional[str] = None,
     port: Optional[str] = None
-) -> PGConnection:
+):
     dbname = dbname or os.getenv("PG_DBNAME")
     user = user or os.getenv("PG_USER")
     password = password or os.getenv("PG_PASSWORD")
     host = host or os.getenv("PG_HOST")
     port = port or os.getenv("PG_PORT")
-    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    # pg8000 requires integers for port
+    try:
+        port = int(port) if port else 5432
+    except ValueError:
+        port = 5432
+        
+    conn = pg8000.dbapi.connect(database=dbname, user=user, password=password, host=host, port=port)
     return conn
