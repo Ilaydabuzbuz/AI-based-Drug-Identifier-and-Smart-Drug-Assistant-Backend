@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from smart_drug_assistant.db.connection import get_db_connection
+from smart_drug_assistant.routers import rag
 
 '''
 SELAM
@@ -8,7 +9,10 @@ terminalde : Run docker-compose up to start PostgreSQL
              Run uvicorn smart_drug_assistant.api.main:app --reload
              to start the FastAPI server.
 '''
-app = FastAPI()
+app = FastAPI(title="Medical Leaflet RAG API")
+
+# Include routers
+app.include_router(rag.router)
 
 @app.get("/check-db")
 def check_db():

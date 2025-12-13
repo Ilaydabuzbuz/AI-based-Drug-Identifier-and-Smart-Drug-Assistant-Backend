@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -17,6 +15,59 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - smart_drug_network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: smart_drug_ollama
+    environment:
+      - OLLAMA_NUM_GPU=0
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - smart_drug_network
+    # Pre-pull models on startup
+    entrypoint: sh -c 'ollama serve & sleep 10 && ollama pull neural-chat && ollama pull nomic-embed-text && wait'
+
+  api:
+    build: .
+    container_name: smart_drug_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://drug_user:drug_password@postgres:5432/smart_drug_db
+      - OLLAMA_HOST=http://ollama:11434
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./smart_drug_assistant:/app/smart_drug_assistant
+      - ./patient_leaflets:/app/patient_leaflets
+      - ./chroma_db:/app/chroma_db
+    networks:
+      - smart_drug_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/check-db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   postgres_data:
+  ollama_data:
+
+networks:
+  smart_drug_network:
+    driver: bridge

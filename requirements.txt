@@ -8,3 +8,7 @@ python-jose[cryptography]
 python-multipart
 pydantic[email]
 email-validator
+langchain==0.1.13
+langchain-community>=0.0.29
+chromadb>=0.4.24
+ollama>=0.1.4
