@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from smart_drug_assistant.db.connection import get_db_connection
-from smart_drug_assistant.routers import rag
+from smart_drug_assistant.routers import rag, model_predict
 
 '''
 SELAM
@@ -12,6 +12,7 @@ terminalde : Run docker-compose up to start PostgreSQL
 app = FastAPI(title="Medical Leaflet RAG API")
 
 # Include routers
+app.include_router(model_predict.router)
 app.include_router(rag.router)
 
 @app.get("/check-db")

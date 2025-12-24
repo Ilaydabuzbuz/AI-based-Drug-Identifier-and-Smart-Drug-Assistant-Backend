@@ -1,14 +1,32 @@
+# FastAPI and web server
 fastapi==0.104.1
 uvicorn==0.24.0
+
+# Database and auth
 pg8000
-python-dotenv==1.0.0
 sqlalchemy
+python-dotenv==1.0.0
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
 pydantic[email]
 email-validator
+
+# Machine Learning / AI
+torch
+transformers
+torchvision
+torchaudio
+ultralytics
+scikit-learn
+Pillow
+
+# LangChain & Chroma
 langchain==0.1.13
 langchain-community>=0.0.29
 chromadb>=0.4.24
 ollama>=0.1.4
+
+# Optional utilities (if used in code)
+numpy
+pandas

@@ -1,4 +1,4 @@
-import pg8000.dbapi
+import os
 import pandas as pd
 
 # Connect to DB

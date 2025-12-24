@@ -44,6 +44,17 @@ Once running, access the application at:
 - **Alternative API Docs**: http://localhost:8000/redoc
 - **Health Check**: http://localhost:8000/check-db
 
+### 💊 Populate Pill Database (Required for Pill Matching)
+
+The pill identification endpoint can match predictions to the `pills` table. After starting Docker, seed the dataset once:
+
+```bash
+# Run the migration inside the API container (recommended)
+docker compose exec -T api python -m smart_drug_assistant.db.migration
+```
+
+This loads `smart_drug_assistant/db/pill_color_imprint_dataset.csv` into PostgreSQL.
+
 ### 📄 Adding Medical Leaflets
 
 Place patient information leaflets (PDFs) for the RAG system:
@@ -74,7 +85,21 @@ curl -X POST "http://localhost:8000/rag/query" \
   -d '{
     "query": "What are the side effects of this medication?"
   }'
+
+# Pill identification (image upload)
+curl -X POST "http://localhost:8000/pill_identify/" \
+  -F "file=@/path/to/pill.jpg"
 ```
+
+### 🔎 Pill Identification Matching Output
+
+`POST /pill_identify/` returns:
+
+- **Predictions**: shape, colors, and an OCR imprint
+- **DB info**: chosen color filters and current `pills` row count
+- **Matches**: ranked candidate pills from the DB
+
+The matcher is designed to be tolerant to imperfect OCR/color predictions by using canonical imprint formatting and fuzzy matching.
 
 ### 🛑 Stopping Services
 
@@ -146,6 +171,8 @@ docker-compose up --build
 ## 📖 More Information
 
 For detailed Docker setup and troubleshooting, see [DOCKER.md](DOCKER.md).
+
+For details on the pill matching logic and why it works this way, see [PILL_MATCHING_LOGIC.md](PILL_MATCHING_LOGIC.md).
 
 ## 🏗️ Project Structure
 

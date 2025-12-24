@@ -24,11 +24,11 @@ services:
     environment:
       - OLLAMA_NUM_GPU=0
     ports:
-      - "11435:11434"
+      - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -48,6 +48,11 @@ services:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://drug_user:drug_password@postgres:5432/smart_drug_db
+      - PG_DBNAME=smart_drug_db
+      - PG_USER=drug_user
+      - PG_PASSWORD=drug_password
+      - PG_HOST=postgres
+      - PG_PORT=5432
       - OLLAMA_HOST=http://ollama:11434
       - PYTHONUNBUFFERED=1
     ports:
